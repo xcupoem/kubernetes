@@ -7,7 +7,8 @@ metadata:
   labels: 
     app: xcu-app 
 spec: 
-  selector: xcu-app
+  selector: 
+    app: xcu-app 
   type: ClusterIP
   clusterIP: none #表示无头服务(headless service), 与kind: StatefulSet 配合使用
   ports:
@@ -25,7 +26,8 @@ metadata:
   labels: 
     app: xcu-app 
 spec: 
-  selector: xcu-app
+  selector: 
+    app: xcu-app
   type: NodePort   #外部流量策略Local模式下，这种模式下的Service类型只能为外部流量，该值只能是NodePort,LoadBalancer
   externalTrafficPolicy: Local
   ports:
