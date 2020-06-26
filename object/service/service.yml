@@ -1,0 +1,36 @@
+#Headless service, metadata.name 必须与 StatefulSet.spec.serviceName一致
+apiVersion: v1
+kind: service
+metadata:
+  name: xcu-app
+  namespace: default
+  labels: 
+    app: xcu-app 
+spec: 
+  selector: xcu-app
+  type: ClusterIP
+  clusterIP: none #表示无头服务(headless service), 与kind: StatefulSet 配合使用
+  ports:
+  - name: frontend
+    protocol: TCP
+    port: 8888
+    targetPort: 8888
+
+---
+apiVersion: v1
+kind: service
+metadata:
+  name: xcu-app
+  namespace: default
+  labels: 
+    app: xcu-app 
+spec: 
+  selector: xcu-app
+  type: NodePort   #外部流量策略Local模式下，这种模式下的Service类型只能为外部流量，该值只能是NodePort,LoadBalancer
+  externalTrafficPolicy: Local
+  ports:
+  - name: frontend
+    protocol: TCP
+    port: 8888
+    targetPort: 8888
+    
