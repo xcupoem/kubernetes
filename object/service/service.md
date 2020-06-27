@@ -1,5 +1,5 @@
 ### 完整的Service
-```
+```yml
 apiVersion: v1            # 必须 string
 kind: Service             # 必须 string
 metadata:                 # 必须 obj
@@ -20,7 +20,7 @@ spec:                     # 必须 详细描述obj
   - name: string          # 端口名称
     protocol: string      # 端口协议，支持TCP和UDP；默认TCP
     port: int             # 供集群中其它服务访问的端口（服务监听端口号）,一般port 和 targetPort一致
-    targetPort: int       # 需要转发到后端Pod的端口号（后端Pod中container暴露的端口），,相当于Dockerfile中的EXPOSE
+    targetPort: int       # 需要转发到后端Pod的端口号（后端Pod中container暴露的端口）,相当于Dockerfile中的EXPOSE
     nodePort: int         # 当spec.type=NodePort时，指定映射到物理机的端口
   status:                 # obj 当spec.type=LoadBalancer时，设置外部均衡器的地址，用于共有云环境
     loadBalancer:         # obj 外部负载均衡器
@@ -29,3 +29,4 @@ spec:                     # 必须 详细描述obj
         hostname: string  # 外部负载均衡器的主机名
 
 ```
+
