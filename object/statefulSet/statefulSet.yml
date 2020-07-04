@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: xcu-app
+  namespace: xcu
+  labels: 
+    app: xcu-app 
+spec: 
+  serviceName: xcu-app
+  replicas: 5
+  updateStrategy: 
+    type: RollingUpdate
+  selector: 
+    matchLabels:
+      app: xcu-app 
+  template: 
+    metadata:
+      labels:
+        app: xcu-app
+    spec:
+      containers:
+      - name: xcu-app
+        image: '127.0.0.1/xcu/xcu-app:v1'
+        imagePullPolicy: Always  # IfNotPresent默认, Always, Never
+        readinessProbe:
+          exec: 
+            command:
+            - sh
+            - /app/exec-check.sh
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 3
+          command: [] #覆盖Dockerfile中的ENTRYPOINT
+          args: []
+          resources:
+            limits:
+              cpu: 4c
+              memory: 16Gi
+            requests:
+              cpu: 1c
+              memory: 16Gi
+          volumeMounts:
+          - name: xcu-app-logs
+            mountPath: /logs/current/xcu-app #pod中的容器的文件目录
+          env:
+          - name: INT_HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP    #pod的宿主机IP
+          - name: INT_POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP     #podIp
+      - name: xcu-app2
+        image: '127.0.0.1/xcu/xcu-app:v1'
+        imagePullPolicy: Always  # IfNotPresent默认, Always, Never
+      imagePullSecrets: #拉取镜像秘钥
+      - name: xcu
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30 #kill pod 等待时间
+      volumes:
+      - name: xcu-app-logs#该名称必须与容器内（volumeMounts.name）声明的一致
+        hostPath: #需要映射的pod调度在该主机上的文件目录
+          path: /logs/current/xcu-app
+      # pod调度反亲和策略，禁止一个应用的不同pod调度在同一台主机上   spec.affinity
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingignoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app #匹配的标签k
+                operator: In #操作符，operator的取值包括In、NotIn、Exists、DoesNotExist、Gt和Lt
+                values:
+                - xcu-app #匹配的标签v
+            topologyKey: kubernetes.io/hostname    
+      
+            
+
+---
+
+    
