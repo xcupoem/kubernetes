@@ -3,7 +3,7 @@ apiVersion: v1
 kind: service
 metadata:
   name: xcu-app
-  namespace: default
+  namespace: xcu
   labels: 
     app: xcu-app 
 spec: 
@@ -22,7 +22,7 @@ apiVersion: v1
 kind: service
 metadata:
   name: xcu-app
-  namespace: default
+  namespace: xcu
   labels: 
     app: xcu-app 
 spec: 
