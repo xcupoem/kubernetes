@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: xcu-app
-  namespace: xcu
+  name: poem-app
+  namespace: poem
   labels: 
-    app: xcu-app 
+    app: poem-app 
 spec: 
-  serviceName: xcu-app
+  serviceName: poem-app
   replicas: 5
   updateStrategy: 
     type: RollingUpdate
   selector: 
     matchLabels:
-      app: xcu-app 
+      app: poem-app 
   template: 
     metadata:
       labels:
-        app: xcu-app
+        app: poem-app
     spec:
       containers:
-      - name: xcu-app
-        image: '127.0.0.1/xcu/xcu-app:v1'
+      - name: poem-app
+        image: '127.0.0.1/poem/poem-app:v1'
         imagePullPolicy: Always  # IfNotPresent默认, Always, Never
         readinessProbe:
           exec: 
@@ -40,8 +40,8 @@ spec:
               cpu: 1c
               memory: 16Gi
           volumeMounts:
-          - name: xcu-app-logs
-            mountPath: /logs/current/xcu-app #pod中的容器的文件目录
+          - name: poem-app-logs
+            mountPath: /logs/current/poem-app #pod中的容器的文件目录
           env:
           - name: INT_HOST_IP
             valueFrom:
@@ -51,17 +51,17 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP     #podIp
-      - name: xcu-app2
-        image: '127.0.0.1/xcu/xcu-app:v1'
+      - name: poem-app2
+        image: '127.0.0.1/poem/poem-app:v1'
         imagePullPolicy: Always  # IfNotPresent默认, Always, Never
       imagePullSecrets: #拉取镜像秘钥
-      - name: xcu
+      - name: poem
       restartPolicy: Always
       terminationGracePeriodSeconds: 30 #kill pod 等待时间
       volumes:
-      - name: xcu-app-logs#该名称必须与容器内（volumeMounts.name）声明的一致
+      - name: poem-app-logs#该名称必须与容器内（volumeMounts.name）声明的一致
         hostPath: #需要映射的pod调度在该主机上的文件目录
-          path: /logs/current/xcu-app
+          path: /logs/current/poem-app
       # pod调度反亲和策略，禁止一个应用的不同pod调度在同一台主机上   spec.affinity
       affinity:
         podAntiAffinity:
@@ -71,7 +71,7 @@ spec:
               - key: app #匹配的标签k
                 operator: In #操作符，operator的取值包括In、NotIn、Exists、DoesNotExist、Gt和Lt
                 values:
-                - xcu-app #匹配的标签v
+                - poem-app #匹配的标签v
             topologyKey: kubernetes.io/hostname    
       
             
